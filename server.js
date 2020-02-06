@@ -6,14 +6,14 @@ const PORT = process.env.PORT || 3000;
 
 //check for API traffic requests over http vs https
 //if https, redirect to http
-app.use(function(req, res, next) {
-  if (req.headers['x-forwarded-proto'] = 'http') {
-    next();
-  }
-  else {
-    res.redirect('http://' + req.hostname + req.url);
-  }
-});
+// app.use(function(req, res, next) {
+//   if (req.headers['x-forwarded-proto'] = 'https') {
+//     next();
+//   }
+//   else {
+//     res.redirect('http://' + req.hostname + req.url);
+//   }
+// });
 
 app.use(express.static('public'));
 
