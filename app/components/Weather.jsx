@@ -1,6 +1,7 @@
 var React = require('react');
 var WeatherForm = require('WeatherForm');
 var WeatherMessage = require('WeatherMessage');
+var ErrorModal = require('ErrorModal');
 var openWeatherMap = require('openWeatherMap');
 
 var Weather = React.createClass({
@@ -15,9 +16,12 @@ var Weather = React.createClass({
     //allows us to access the this value inside the function below
     var that = this;
     //before location search begins set isLoading state to true
-    this.setState({ isLoading: true});
+    this.setState({
+      isLoading: true,
+      // clear any previously created error messages
+      errorMessage: undefined
+    });
 
-    console.log(location);
     //call getTemp function to make API call
     //pass in location
     //attach promise (success function followed by error function)
@@ -29,15 +33,15 @@ var Weather = React.createClass({
         temp: temp,
         isLoading: false
       });
-    }, function (errorMessage) {
+    }, function (e) {
       that.setState({
-        isLoading: false
+        isLoading: false,
+        errorMessage: e.message
       });
-      alert(errorMessage);
     });
   },
   render: function() {
-    var {isLoading, temp, location} = this.state;
+    var {isLoading, temp, location, errorMessage} = this.state;
 
     //do a check before render method
     function renderMessage() {
@@ -50,12 +54,24 @@ var Weather = React.createClass({
         return <WeatherMessage location={location} temp={temp} />;
       }
     }
+
+    function renderError () {
+      //check if there is an error message returned from API call
+      if (typeof errorMessage === 'string') {
+        return (
+          <ErrorModal message={errorMessage}/>
+        )
+      }
+    }
+
     return (
       <div>
         <h1 className="text-center">Get Weather</h1>
         <WeatherForm onSearch={this.handleSearch} />
         {/* render the renderMessage function from above */}
         {renderMessage()}
+        {/* call renderError function */}
+        {renderError()}
       </div>
     );
   }
