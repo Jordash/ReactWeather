@@ -19,7 +19,10 @@ var Weather = React.createClass({
     this.setState({
       isLoading: true,
       // clear any previously created error messages
-      errorMessage: undefined
+      errorMessage: undefined,
+      //clear out location and temp valuse from previous searches
+      location: undefined,
+      temp: undefined
     });
 
     //call getTemp function to make API call
@@ -39,6 +42,25 @@ var Weather = React.createClass({
         errorMessage: e.message
       });
     });
+  },
+  componentDidMount: function() {
+    {/* retreive the location from the querystring */}
+    var location = this.props.location.query.location;
+
+    {/* check for valid location on querystring */}
+    if (location && location.length > 0) {
+      this.handleSearch(location);
+
+      {/* reset url to remove querystring after location is retreived */}
+      window.location.hash = '#/';
+    }
+  },
+  componentWillReceiveProps: function(newProps) {
+    var location = newProps.location.query.location;
+
+    if (location && location.length > 0) {
+      this.handleSearch(location);
+    }
   },
   render: function() {
     var {isLoading, temp, location, errorMessage} = this.state;
